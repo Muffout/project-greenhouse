@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id Int @id @default(autoincrement())
+
+  email          String     @unique
+  hashedPassword String?
+  role           String     @default("USER")
+  name           String?
+  listings       Listings[]
+  sessions       Session[]
+  tokens         Token[]
+  profile        Profile[]
+}
+
+model Session {
+  id                 Int       @id @default(autoincrement())
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  expiresAt          DateTime?
+  handle             String    @unique
+  hashedSessionToken String?
+  antiCSRFToken      String?
+  publicData         String?
+  privateData        String?
+  userId             Int?
+  user               User?     @relation(fields: [userId], references: [id])
+}
+
+model Token {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  hashedToken String
+  type        String
+  expiresAt   DateTime
+  sentTo      String
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@unique([hashedToken, type])
+}
+
+model Profile {
+  id          Int      @id @unique @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      Int?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  isOnline    Boolean  @default(false)
+  description String?
+  isEditing   Boolean  @default(false)
+}
+
+model Listings {
+  id          Int      @id @default(autoincrement())
+  listingName String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  price       Int
+  description String
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+}

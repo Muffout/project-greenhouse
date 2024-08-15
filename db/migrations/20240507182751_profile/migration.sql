@@ -1,0 +1,17 @@
+-- CreateTable
+CREATE TABLE "Profile" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "nickname" TEXT NOT NULL,
+    CONSTRAINT "Profile_id_fkey" FOREIGN KEY ("id") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Listings" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "profileId" INTEGER NOT NULL,
+    "listingName" TEXT NOT NULL,
+    "listingDate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    "price" INTEGER NOT NULL,
+    CONSTRAINT "Listings_profileId_fkey" FOREIGN KEY ("profileId") REFERENCES "Profile" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
